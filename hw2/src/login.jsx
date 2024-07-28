@@ -1,0 +1,86 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; 
+import { ipAddress } from './App';
+//import { ipAddress } from './App';
+const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${ipAddress}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // Successful login, store token (replace with your authentication logic)
+        localStorage.setItem('authToken', data.token); // Example: store token in local storage
+        console.log('Login successful');
+        // Redirect to protected area or dashboard
+      } else {
+        setError(data.error);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      setError('An error occurred');
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 p-4 pt-6 pb-8 mb-4 rounded shadow-md">
+        <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100">Login</h1>
+        {error && <div className="text-red-500">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="email">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded"
+              placeholder="Enter your email"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="password">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded"
+              placeholder="Enter your password"
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default LoginPage;
