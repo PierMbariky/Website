@@ -5,7 +5,7 @@ import Sidebar from './components/sidebar'
 import Signup from './signup';
 import Login from './login';
 import Learn from './learn';
-export const ipAddress = 'https://vercel.com/pier-mbarikys-projects/website-7zea/Z2B6bp5rvux3VCUYko9W9t9WPu1A';
+export const ipAddress = 'http://localhost:3000';
 import AboutUs from './aboutus';
 import ContactUs from './contactus';
 import LetterUnit from './components/characters';

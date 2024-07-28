@@ -58,7 +58,7 @@ function AboutUs() {
             </div>
             <div className="flex flex-col items-center bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
               <img
-                src="blob:https://web.whatsapp.com/f45490f5-0fdc-42c8-b37b-f7f1567d8c7e"
+                src="https://media-mrs2-3.cdn.whatsapp.net/v/t61.24694-24/438821643_436080222746358_5579726536323847380_n.jpg?stp=dst-jpg_s96x96&ccb=11-4&oh=01_Q5AaIJMQbzCDx99mkWNjAD5YifZoSykkwj8cRVbM2S1jO_Hp&oe=66B3A3F8&_nc_sid=e6ed6c&_nc_cat=104"
                 alt="Team Member"
                 className="w-24 h-24 rounded-full mb-4"
               />
