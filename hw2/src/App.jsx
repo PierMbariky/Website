@@ -26,6 +26,8 @@ function App() {
         <main className="flex-1 ml-64">
           <Routes>
           <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />
+
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/learn" element={<Learn />} />

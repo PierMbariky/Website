@@ -12,7 +12,7 @@ function Sidebar({ darkMode, onToggleTheme }) {
     >
       <div className="flex items-center mb-6">
         <a
-          href="/home"
+          href="/"
           className="text-2xl font-bold hover:text-gray-700 dark:hover:text-white transition duration-300 ease-in-out"
         >
           Playwise
