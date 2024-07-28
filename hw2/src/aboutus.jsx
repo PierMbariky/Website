@@ -53,17 +53,17 @@ function AboutUs() {
                 alt="Team Member"
                 className="w-24 h-24 rounded-full mb-4"
               />
-              <h3 className="text-xl font-bold mb-2">Jol Horani</h3>
+              <h3 className="text-xl font-bold mb-2">Joul Hourany</h3>
               <p className="text-gray-600 dark:text-gray-300">CFO</p>
             </div>
             <div className="flex flex-col items-center bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
               <img
-                src="https://media-mrs2-1.cdn.whatsapp.net/v/t61.24694-24/427190015_902254798305008_7551432432306399211_n.jpg?ccb=11-4&oh=01_Q5AaIF4kWPU0IcMjsw9wD0qD26ObpCCUwt4cnXII5_Aerb-1&oe=66B27A5A&_nc_sid=e6ed6c&_nc_cat=100"
+                src="blob:https://web.whatsapp.com/f45490f5-0fdc-42c8-b37b-f7f1567d8c7e"
                 alt="Team Member"
                 className="w-24 h-24 rounded-full mb-4"
               />
               <h3 className="text-xl font-bold mb-2">Nadeen Halabi</h3>
-              <p className="text-gray-600 dark:text-gray-300">Fired</p>
+              <p className="text-gray-600 dark:text-gray-300">COO</p>
             </div>
           </div>
         </div>
