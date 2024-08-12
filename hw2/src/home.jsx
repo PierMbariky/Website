@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function Home() {
+  // Check if a user is logged in by inspecting localStorage
+  const isLoggedIn = localStorage.getItem('user') !== null;
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white p-4">
       <div className="text-center">
@@ -9,18 +12,20 @@ function Home() {
         <p className="text-lg mb-8">
           Your ultimate platform for learning and fun. Join us and explore new skills today!
         </p>
-        <div className="flex justify-center space-x-4">
-          <Link to="/signup">
-            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">
-              Sign Up
-            </button>
-          </Link>
-          <Link to="/login">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
-              Log In
-            </button>
-          </Link>
-        </div>
+        {!isLoggedIn && (
+          <div className="flex justify-center space-x-4">
+            <Link to="/signup">
+              <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">
+                Sign Up
+              </button>
+            </Link>
+            <Link to="/login">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
+                Log In
+              </button>
+            </Link>
+          </div>
+        )}
       </div>
       <div className="mt-16">
         <h2 className="text-4xl font-bold text-center mb-8">Features</h2>

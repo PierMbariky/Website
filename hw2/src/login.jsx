@@ -1,11 +1,13 @@
+// Login.js
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { ipAddress } from './App';
-//import { ipAddress } from './App';
-const LoginPage = () => {
+
+const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -26,10 +28,9 @@ const LoginPage = () => {
 
       const data = await response.json();
       if (response.ok) {
-        // Successful login, store token (replace with your authentication logic)
-        localStorage.setItem('authToken', data.token); // Example: store token in local storage
-        console.log('Login successful');
-        // Redirect to protected area or dashboard
+        localStorage.setItem('user', JSON.stringify(data.user));
+        onLogin(data.user);
+        navigate('/home'); // Redirect to protected area or dashboard
       } else {
         setError(data.error);
       }
@@ -46,9 +47,7 @@ const LoginPage = () => {
         {error && <div className="text-red-500">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="email">
-              Email
-            </label>
+            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
@@ -59,9 +58,7 @@ const LoginPage = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="password">
-              Password
-            </label>
+            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
@@ -71,11 +68,8 @@ const LoginPage = () => {
               placeholder="Enter your password"
             />
           </div>
-          <button
-            type="submit"
-            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full"
-          >
-            Login
+          <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Log In
           </button>
         </form>
       </div>
@@ -83,4 +77,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;

@@ -32,7 +32,7 @@ app.get('/api/courses', (req, res) => {
     dataHandler.handleCourses(req, res);
   });
 app.get('/api/courses/:courseId/units', (req, res) => {
-    console.log(req.body)
+
     dataHandler.handleUnits(req, res);
 });
 app.get('/api/units/:unitId/lessons', (req, res) => {
@@ -40,6 +40,13 @@ app.get('/api/units/:unitId/lessons', (req, res) => {
 });
 app.get('/api/lessons/:lessonId/questions', (req, res) => {
   dataHandler.handleQuestions(req, res);
+});
+app.get('/api/users/:email/units/:unitId/lessonsprogress', (req, res) => {
+  console.log('hi');
+  dataHandler.getLessonsProgress(req, res);
+});
+app.post('/api/lessons/:lessonId/complete', (req, res) => {
+  dataHandler.updateCompletedLesson(req, res);
 });
 
 

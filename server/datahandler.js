@@ -40,6 +40,15 @@ const questionSchema = new mongoose.Schema({
     correct_answer: { type: String, required: true },
     difficulty: { type: Number, required: true }
   });
+  const lessonProgressSchema = new mongoose.Schema({
+    email: { type: String, required: true, },
+    unitid: { type: Number, required: true },
+    lessonid: { type: Number, required: true },
+    completed: { type: Boolean, required: true }
+  });
+  
+  const Lessonprogress = mongoose.model('Lessonprogress', lessonProgressSchema, 'Lessonprogress');
+  
   const Question = mongoose.model('Question', questionSchema, 'Questions');
 
 // Create a model from the lesson schema
@@ -61,7 +70,6 @@ async function handleSignUp(req, res) {
         // Check if the email already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            console.log('hi');
            return  res.status(400).json({error: 'Email already in use.' });
         }
 
@@ -69,10 +77,10 @@ async function handleSignUp(req, res) {
         const newUser = new User({ name, email, password });
 
         // Save the user to the database
-        await newUser.save();
+        const saveduser=await newUser.save();
 
         // Send a response
-        res.json({ success:true ,message: 'User created successfully!' });
+        res.json({ success:true ,user:saveduser });
     } catch (error) {
         console.error('Error saving user:', error.message);
         res.status(500).json({ error: 'An error occurred while signing up.' });
@@ -127,11 +135,9 @@ async function handleCourses(req, res) {
 async function handleUnits(req, res) {
     const { courseId } = req.params;
 
-    console.log(req.params)
 
     try {
         const units = await Unit.find({ Courseid: parseInt(courseId, 10) });
-        console.log(units);
         res.json({
             success: true,
             units: units.map(unit => ({
@@ -152,7 +158,6 @@ async function handleLessons(req, res) {
   
     try {
       const lessons = await Lesson.find({ unitid: parseInt(unitId, 10) });
-      console.log(lessons)
       res.json({
         success: true,
         lessons: lessons.map(lesson => ({
@@ -189,5 +194,59 @@ async function handleLessons(req, res) {
       res.status(500).json({ error: 'An error occurred while retrieving questions.' });
     }
   }
-  
-  module.exports = { handleSignUp, handleLogin, handleCourses, handleUnits, handleLessons, handleQuestions };
+  async function getLessonsProgress(req, res) {
+    const { email,unitId } = req.params; // Use email to identify the user
+    console.log(email);
+    console.log(unitId);
+    try {
+        // Find completed lessons for the user using email
+        const completedLessons = await Lessonprogress.find({ email, unitid: parseInt(unitId, 10), completed: true });
+
+        console.log(completedLessons);
+        res.json({
+            success: true,
+            completedLessons: completedLessons.map(progress => ({
+                unitid: progress.unitid,
+                lessonid: progress.lessonid,
+                completed: progress.completed
+            }))
+        });
+    } catch (error) {
+        console.error('Error retrieving lesson progress:', error.message);
+        res.status(500).json({ error: 'An error occurred while retrieving lesson progress.' });
+    }
+}
+async function updateCompletedLesson(req, res) {
+    const { unitId, lessonId,email } = req.body; // Make sure the key names match
+    try {
+        // Check if progress already exists
+        let progress = await Lessonprogress.findOne({ email, unitid: parseInt(unitId, 10), lessonid: parseInt(lessonId, 10) });
+
+        if (progress) {
+            // Update existing progress
+            progress.completed = true;
+            await progress.save();
+        } else {
+            // Create new progress entry
+            progress = new Lessonprogress({ email,  unitid: parseInt(unitId, 10), lessonid: parseInt(lessonId, 10), completed: true });
+            await progress.save();
+        }
+
+        res.json({ success: true, message: 'Lesson progress updated successfully.' });
+    } catch (error) {
+        console.error('Error updating lesson progress:', error.message);
+        res.status(500).json({ error: 'An error occurred while updating lesson progress.' });
+    }
+}
+
+
+module.exports = {
+    handleSignUp,
+    handleLogin,
+    handleCourses,
+    handleUnits,
+    handleLessons,
+    handleQuestions,
+    getLessonsProgress,
+    updateCompletedLesson
+  };

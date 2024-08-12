@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ipAddress } from './App';
 
-const SignupPage = () => {
+const SignupPage = ({ onUserUpdate }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -32,7 +34,9 @@ const SignupPage = () => {
       }
 
       const data = await response.json();
-      alert(data.message);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      onUserUpdate(data.user); // Update the user state in App.js
+      navigate('/home'); // Redirect to home page after signup
     } catch (error) {
       console.error('Error during signup:', error);
       alert('An error occurred. Please try again.');

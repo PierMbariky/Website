@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ipAddress } from './App';
 import Unit from './components/unit';
-import Lesson from './components/lesson'; // Ensure this component is properly defined
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import Lesson from './components/lesson';
+import { useNavigate } from 'react-router-dom';
 
 function Learn() {
   const [courses, setCourses] = useState([]);
@@ -10,22 +10,34 @@ function Learn() {
   const [units, setUnits] = useState([]);
   const [showUnits, setShowUnits] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState(null);
-  const [lessons, setLessons] = useState([]);
+  const [lessons, setLessons] = useState({});
   const [showLessons, setShowLessons] = useState(false);
-  const [completedLessons, setCompletedLessons] = useState({}); // Track completed lessons
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+
+  // Retrieve user information from localStorage
+  const userJson = localStorage.getItem('user');
+  let email = null;
+
+  if (userJson) {
+    const user = JSON.parse(userJson);
+    email = user.email;
+  }
 
   useEffect(() => {
-    fetch(`${ipAddress}/api/courses`)
-      .then(response => response.json())
-      .then(data => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(`${ipAddress}/api/courses`);
+        const data = await response.json();
         if (data.success) {
           setCourses(data.courses);
         } else {
           console.error('Failed to fetch courses:', data.error);
         }
-      })
-      .catch(error => console.error('Error fetching courses:', error));
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+      }
+    };
+    fetchCourses();
   }, []);
 
   const handleCourseSelect = (course) => {
@@ -34,47 +46,72 @@ function Learn() {
     setShowUnits(true);
   };
 
-  const fetchUnits = (courseId) => {
-    fetch(`${ipAddress}/api/courses/${courseId}/units`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          setUnits(data.units);
-        } else {
-          console.error('Failed to fetch units:', data.error);
-        }
-      })
-      .catch(error => console.error('Error fetching units:', error));
+  const fetchUnits = async (courseId) => {
+    try {
+      const response = await fetch(`${ipAddress}/api/courses/${courseId}/units`);
+      const data = await response.json();
+      if (data.success) {
+        setUnits(data.units);
+      } else {
+        console.error('Failed to fetch units:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching units:', error);
+    }
   };
 
   const handleUnitSelect = (unit) => {
     setSelectedUnit(unit);
-    fetchLessons(unit.id);
+    fetchLessons(unit.id, email);
     setShowLessons(true);
   };
 
-  const fetchLessons = (unitId) => {
-    fetch(`${ipAddress}/api/units/${unitId}/lessons`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          setLessons(data.lessons);
-          // Update completed lessons status
-          const completed = data.lessons.reduce((acc, lesson) => {
-            acc[lesson.id] = lesson.completed;
-            return acc;
-          }, {});
-          setCompletedLessons(completed);
+  const fetchLessons = async (unitId, email) => {
+    try {
+      // 1. Fetch lessons
+      const lessonsResponse = await fetch(`${ipAddress}/api/units/${unitId}/lessons`);
+      const lessonsData = await lessonsResponse.json();
+      if (!lessonsData.success) {
+        throw new Error('Failed to fetch lessons: ' + lessonsData.error);
+      }
+  
+      // 2. Create a map of lessons and initialize completion status
+      const lessonObject = {};
+      lessonsData.lessons.forEach(lesson => {
+        lessonObject[lesson.id] = { lesson, completed: false };
+      });
+  
+      // 3. Fetch or retrieve completion status for all users (logged in or not)
+      if (email) {
+        const progressResponse = await fetch(`${ipAddress}/api/users/${email}/units/${unitId}/lessonsprogress`);
+        const progressData = await progressResponse.json();
+        if (!progressData.success) {
+          throw new Error('Failed to fetch progress: ' + progressData.error);
         } else {
-          console.error('Failed to fetch lessons:', data.error);
+          progressData.completedLessons.forEach(progress => {
+            if (progress.completed) {
+              lessonObject[progress.lessonid].completed = true;
+            }
+          });
         }
-      })
-      .catch(error => console.error('Error fetching lessons:', error));
-  };
-
-  const handleLessonCompletion = (lessonId) => {
-    // Update completion status locally
-    setCompletedLessons(prev => ({ ...prev, [lessonId]: true }));
+      } else {
+        // Retrieve from localStorage and match by unitId and lessonId
+        const completedLessons = JSON.parse(localStorage.getItem('completedLessons')) || [];
+        
+        completedLessons.forEach(completedLesson => {
+  
+          if (completedLesson.unitId == unitId) { 
+            lessonObject[completedLesson.lessonId].completed=true;
+          }
+        });
+      }
+      // Update the lessons state with the completed lessons
+    
+      setLessons(lessonObject); 
+  
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   const handleBack = () => {
@@ -90,13 +127,20 @@ function Learn() {
         <div className="mt-8 w-full max-w-6xl">
           <h2 className="text-2xl font-bold mb-4">Lessons</h2>
           <div className="flex flex-wrap gap-4 justify-center">
-            {lessons.map((lesson, index) => (
-              <Lesson
-                key={index}
-                lesson={lesson}
-                completed={completedLessons[lesson.id]}
-              />
-            ))}
+            {Object.values(lessons).map((lessonData) => {
+              const isExam = lessonData.lesson.title === 'Exam';
+              const allOtherLessonsCompleted = Object.values(lessons).every(ld => ld.lesson.title === 'Exam' || ld.completed);
+              const isLocked = isExam && !allOtherLessonsCompleted;
+              
+              return (
+                <Lesson
+                  key={lessonData.lesson.id}
+                  lesson={lessonData.lesson}
+                  completed={lessonData.completed}
+                  isLocked={isLocked}
+                />
+              );
+            })}
           </div>
           <button
             className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded mt-4"
@@ -109,9 +153,9 @@ function Learn() {
         <div className="mt-8 w-full max-w-6xl">
           <h2 className="text-2xl font-bold mb-4">Units</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            {units.map((unit, index) => (
+            {units.map((unit) => (
               <Unit
-                key={index}
+                key={unit.id}
                 unit={unit}
                 onClick={() => handleUnitSelect(unit)}
               />
@@ -127,8 +171,8 @@ function Learn() {
       ) : (
         <div className="w-full max-w-6xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            {courses.map((item, index) => (
-              <div key={index} className="p-4">
+            {courses.map((item) => (
+              <div key={item.courseId} className="p-4">
                 <div className="bg-white dark:bg-gray-800 rounded shadow-md p-4 flex flex-col items-center">
                   <h2 className="text-xl font-bold mb-4 text-center">{item.name}</h2>
                   <img
@@ -144,7 +188,7 @@ function Learn() {
         </div>
       )}
     </div>
-  );
+  );  
 }
 
 export default Learn;
