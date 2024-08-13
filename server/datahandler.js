@@ -38,6 +38,7 @@ const questionSchema = new mongoose.Schema({
     question: { type: String, required: true },
     options: [[String]], // Array of arrays of strings
     correct_answer: { type: String, required: true },
+    description:{type:String,required:false},
     difficulty: { type: Number, required: true }
   });
   const lessonProgressSchema = new mongoose.Schema({
@@ -175,7 +176,6 @@ async function handleLessons(req, res) {
   
   async function handleQuestions(req, res) {
     const { lessonId } = req.params;
-  
     try {
       const questions = await Question.find({ lessonid: parseInt(lessonId, 10) });
       res.json({
@@ -186,7 +186,8 @@ async function handleLessons(req, res) {
           question: question.question,
           options: question.options, // Options is already an array of arrays
           correct_answer: question.correct_answer,
-          difficulty: question.difficulty
+          difficulty: question.difficulty,
+          description:question.description
         }))
       });
     } catch (error) {

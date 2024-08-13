@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Lesson = ({ lesson, completed, isLocked }) => {
+  const isExam = lesson.title.toLowerCase() === 'exam';
+
   return (
     <div className="flex justify-center mb-4">
       {isLocked ? (
@@ -13,6 +15,7 @@ const Lesson = ({ lesson, completed, isLocked }) => {
       ) : (
         <Link
           to={`/Lessonspage/${lesson.unitid}/${lesson.id}`}
+          state={{ exam: lesson.title=='Exam' }}  // Passing lesson title as state
           className={`bg-orange-500 hover:bg-orange-700 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-full shadow-md p-4 w-24 h-24 flex justify-center items-center relative ${completed ? 'border-2 border-green-500' : ''}`}
         >
           <div className="text-lg font-bold text-white">{lesson.title}</div>
