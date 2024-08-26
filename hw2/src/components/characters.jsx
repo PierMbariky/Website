@@ -1,5 +1,5 @@
 import React from 'react';
-
+// Array containing letters and their associated sound file paths
 const letters = [
   { letter: 'ד', sound: '/sound/ד.mp3' },
   { letter: 'ג', sound: '/sound/ג.mp3' },
@@ -25,12 +25,12 @@ const letters = [
   { letter: 'ש', sound: '/sound/ש.mp3' }
   // Add more letters and sound paths
 ];
-
+// Function to play sound associated with a letter
 function playSound(soundPath) {
   const audio = new Audio(soundPath);
   audio.play();
 }
-
+// Component to display the letter buttons
 function LetterUnit() {
   return (
     <div className="min-h-screen bg-gray-200 dark:bg-gray-900 text-gray-900 dark:text-white p-4">

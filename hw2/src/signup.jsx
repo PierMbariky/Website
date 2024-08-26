@@ -3,22 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import { ipAddress } from './App';
 
 const SignupPage = ({ onUserUpdate }) => {
+    // State variables for form inputs and navigation
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
-
+// Handle form submission for signup
   const handleSubmit = async (event) => {
     event.preventDefault();
+    // Basic validation for required fields and password match
 
     if (!name || !email || !password || password !== confirmPassword) {
-      alert('Please fill all fields correctly.');
+      alert('Please fill all fields correctly.'); // Simple alert for now, could be improved with more user-friendly feedback
       return;
     }
 
-    const newUser = { name, email, password };
+    const newUser = { name, email, password };// Create new user object
     try {
+      // Send signup request to the server
       const response = await fetch(`${ipAddress}/api/signUp`, {
         method: 'POST',
         headers: {
@@ -27,22 +31,22 @@ const SignupPage = ({ onUserUpdate }) => {
         body: JSON.stringify(newUser),
       });
 
-      if (!response.ok) {
+      if (!response.ok) {// Handle errors from the server
         const data = await response.json();
         alert(data.message || 'An error occurred during signup.');
         return;
       }
 
-      const data = await response.json();
-      localStorage.setItem('user', JSON.stringify(data.user));
-      onUserUpdate(data.user); // Update the user state in App.js
-      navigate('/home'); // Redirect to home page after signup
-    } catch (error) {
+      const data = await response.json();// Get user data from successful response
+      localStorage.setItem('user', JSON.stringify(data.user));// Store user data in local storage
+      onUserUpdate(data.user); // Update the user state in the parent component (App.js)
+      navigate('/home'); // Redirect to home page after successful signup
+    } catch (error) {// Handle network or other errors
       console.error('Error during signup:', error);
       alert('An error occurred. Please try again.');
     }
   };
-
+  // JSX for the signup form
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 p-4 pt-6 pb-8 mb-4 rounded shadow-md">

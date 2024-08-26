@@ -1,68 +1,119 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ipAddress } from './App'; // Assuming you have ipAddress defined in App.js
 
 function ContactUs() {
+    // State for form data and submission status
+    //data the user trying to send 
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+
+  const [error, setError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  // Handle form input changes
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.id]: event.target.value });
+  };
+  // Handle form submission
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();   
+
+    setError(''); // Clear previous errors
+    setSubmitSuccess(false);
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    try {
+      // Send data to your backend 
+      const response = await fetch(`${ipAddress}/api/contact`, { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSubmitSuccess(true);
+        setFormData({ name: '', email: '', message:   
+ '' }); // Clear form after successful submission
+      } else {
+        const data = await response.json();
+        setError(data.error || 'An error occurred'); // Handle potential error messages from the backend
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setError('An error occurred');
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center justify-center p-4">
-      <div className="max-w-4xl w-full">
-        <h1 className="text-4xl font-bold mb-4 text-center">Contact Us</h1>
-        <p className="text-lg mb-8 text-center">
-          Have any questions or feedback? We'd love to hear from you! Please fill out the form below or reach out to us through our social media channels.
-        </p>
-        <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg mb-8">
-          <form>
-            <div className="mb-4">
-              <label className="block text-lg font-bold mb-2" htmlFor="name">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600"
-                placeholder="Your name"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-lg font-bold mb-2" htmlFor="email">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600"
-                placeholder="Your email"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-lg font-bold mb-2" htmlFor="message">
-                Message
-              </label>
-              <textarea
-                id="message"
-                className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600"
-                rows="5"
-                placeholder="Your message"
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
-            >
-              Send
-            </button>
-          </form>
-        </div>
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold mb-2">Our Office</h2>
-          <p className="text-lg">
-          Snunit 51 st,Karmiel 2161002,Israel
-          </p>
-          <p className="text-lg">
-            Email: contact@playwise.com
-          </p>
-          <p className="text-lg">
-            Phone: +972-4-2161002
-          </p>
-        </div>
+    <div className="max-w-4xl w-full">
+      <h1 className="text-4xl font-bold mb-4 text-center">Contact Us</h1>
+      <p className="text-lg mb-8 text-center">
+        Have any questions or feedback? We'd love to hear from you! Please fill out the form below or reach out to us through our social media channels.
+      </p>
+      <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg mb-8">
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-lg font-bold mb-2" htmlFor="name">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"   
+
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600"
+              placeholder="Your name"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-lg font-bold mb-2" htmlFor="email">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600"
+              placeholder="Your email"
+            />
+            {error && <p className="text-red-500 text-sm mt-1">{error}</p>} 
+          </div>
+          <div className="mb-4">
+            <label className="block text-lg font-bold mb-2" htmlFor="message">
+              Message
+            </label>
+            <textarea
+              id="message"
+              value={formData.message}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600"
+              rows="5"
+              placeholder="Your message"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"   
+
+          >
+            Send
+          </button>
+          {submitSuccess && <p className="text-green-500 text-sm mt-2">Message sent successfully!</p>} 
+        </form>
+      </div>
         <div className="flex justify-center space-x-4">
           <a href="https://facebook.com" className="text-blue-600 hover:text-blue-800">
             <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M22 0H2C.9 0 0 .9 0 2v20c0 1.1.9 2 2 2h11v-9H9v-4h4V8c0-4 2-6 6-6 1 0 2 0 3 .1V6h-2c-2 0-3 1-3 3v3h4l-1 4h-3v9h6c1.1 0 2-.9 2-2V2c0-1.1-.9-2-2-2z"/></svg>

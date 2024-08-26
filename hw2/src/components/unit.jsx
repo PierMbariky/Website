@@ -1,15 +1,17 @@
 // Unit.js
 import React from 'react';
-
+// Functional component for rendering a unit
 function Unit({ unit, darkMode = false, className = '', onClick }) {
+    // State to manage the active state for animation
   const [active, setActive] = React.useState(false);
-
+  // Handler function for click events
   const handleClick = () => {
+        // Set active state to true to trigger animation
     setActive(true);
     setTimeout(() => setActive(false), 200);
     onClick(unit); // Call the onClick prop with the unit object
   };
-
+  // Determine background and text colors based on darkMode prop
   const backgroundColor = darkMode ? 'bg-orange-900' : 'bg-orange-500';
   const hoverBackgroundColor = darkMode ? 'bg-orange-800' : 'bg-orange-700';
   const textColor = darkMode ? 'text-white' : 'text-white';

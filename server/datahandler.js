@@ -1,21 +1,24 @@
 const axios = require('axios');
 const mongoose = require('mongoose'); // Import mongoose
 
-   // Define the user schema inside the function
-   const userSchema = new mongoose.Schema({
+// Define the user schema (structure of user data)
+const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     points: { type: Number, default: 0 } // Set default points to 0
 });
 
-// Create a model from the schema inside the function
+// Create a User model from the schema, using the 'Users' collection
 const User = mongoose.model('User', userSchema, 'Users');
+// Define schemas for other entities (Course, Unit, Lesson, Question, LessonProgress, Contact)
+// Course Schema
 const courseSchema = new mongoose.Schema({
     Coursename: { type: String, required: true },
     Imagesrc: { type: String, required: true },
     Courseid: {type: Number,required:true }
 });
+// Unit Schema
 const unitSchema = new mongoose.Schema({
     id: { type: Number, required: true },
     Courseid: { type: Number, required: true },
@@ -24,13 +27,16 @@ const unitSchema = new mongoose.Schema({
     order:{type: Number,required:true}
 
 });
+// Lesson Schema
 const lessonSchema = new mongoose.Schema({
     id: { type: Number, required: true },
     unitid: { type: Number, required: true },
     title: { type: String, required: true },
-    order: { type: Number, required: true }
+    order: { type: Number, required: true },
+    videoUrl:{type: String,required: true}
 });
 
+// Question Schema
 
 const questionSchema = new mongoose.Schema({
     id: { type: Number, required: true },
@@ -41,12 +47,23 @@ const questionSchema = new mongoose.Schema({
     description:{type:String,required:false},
     difficulty: { type: Number, required: true }
   });
+  // Lesson Progress Schema
   const lessonProgressSchema = new mongoose.Schema({
     email: { type: String, required: true, },
     unitid: { type: Number, required: true },
     lessonid: { type: Number, required: true },
     completed: { type: Boolean, required: true }
   });
+  // Contact Schema
+
+  const contactSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    message: { type: String, required: true }
+  });
+  // Create models from the schemas
+  const Contact   
+   = mongoose.model('Contact', contactSchema); 
   
   const Lessonprogress = mongoose.model('Lessonprogress', lessonProgressSchema, 'Lessonprogress');
   
@@ -159,13 +176,15 @@ async function handleLessons(req, res) {
   
     try {
       const lessons = await Lesson.find({ unitid: parseInt(unitId, 10) });
+      console.log(lessons);
       res.json({
         success: true,
         lessons: lessons.map(lesson => ({
           id: lesson.id,
           unitid: lesson.unitid,
           title: lesson.title,
-          order: lesson.order
+          order: lesson.order,
+          videoUrl:lesson.videoUrl
         }))
       });
     } catch (error) {
@@ -239,6 +258,20 @@ async function updateCompletedLesson(req, res) {
         res.status(500).json({ error: 'An error occurred while updating lesson progress.' });
     }
 }
+async function handleContact(req, res) {
+    const { name, email, message } = req.body;
+  
+    try {
+      const newContact = new Contact({ name, email, message });
+      await newContact.save();
+  
+      res.json({   
+   success: true });
+    } catch (error) {
+      console.error('Error saving contact:', error.message);
+      res.status(500).json({ error: 'An error occurred while processing your message.' });
+    }
+  }
 
 
 module.exports = {
@@ -249,5 +282,6 @@ module.exports = {
     handleLessons,
     handleQuestions,
     getLessonsProgress,
-    updateCompletedLesson
+    updateCompletedLesson,
+    handleContact
   };

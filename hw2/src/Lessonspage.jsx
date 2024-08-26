@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ipAddress } from './App';
+import VideoPopup from './components/VideoPopup';
 
 const LessonPages = () => {
+      // Access route parameters and navigation
+        // State variables
     const { lessonId, unitId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -10,64 +13,102 @@ const LessonPages = () => {
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [userAnswer, setUserAnswer] = useState('');
     const [isCorrect, setIsCorrect] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+    const [timeLeft, setTimeLeft] = useState(600);
+    const [showPopup, setShowPopup] = useState(true);
+    const [showExamInfo, setShowExamInfo] = useState(false);
     const user = JSON.parse(localStorage.getItem('user')) || {};
     const email = user.email || '';
-    const isExam = location.state.exam;
+    const isExam = location.state?.exam;
+    const videoUrl = location.state?.videoUrl;
 
+    // Function to format the YouTube video URL for embedding
+    const formatVideoUrl = (url) => {
+        console.log(url);
+        if (url.includes('youtube.com/watch')) {
+            const videoId = new URL(url).searchParams.get('v');
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+        return url;
+    };
+  // Fetch questions when lessonId changes
     useEffect(() => {
         if (lessonId) {
             fetchQuestions(lessonId);
         }
     }, [lessonId]);
-
+      // Show exam info if it's an exam
     useEffect(() => {
-        console.log(location.state);
         if (isExam) {
+            setShowExamInfo(true);
+        }
+    }, [isExam]);
+      // Start exam timer if it's an exam and instructions are closed
+    useEffect(() => {
+        if (isExam && !showExamInfo) {
             const timer = setInterval(() => {
-                setTimeLeft(prevTime => {
+                setTimeLeft((prevTime) => {
                     if (prevTime <= 0) {
                         clearInterval(timer);
-                        failExam();
+                        failExam();// Handle exam failure
                         return 0;
                     }
                     return prevTime - 1;
                 });
             }, 1000);
 
-            return () => clearInterval(timer);
+            return () => clearInterval(timer);// Cleanup on unmount
         }
-    }, [isExam]);
+    }, [isExam, showExamInfo]);
+  // Fetch questions from the API
 
     const fetchQuestions = (lessonId) => {
         fetch(`${ipAddress}/api/lessons/${lessonId}/questions`)
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => response.json())
+            .then((data) => {
                 if (data.success) {
                     setQuestions(data.questions);
                 } else {
                     console.error('Failed to fetch questions:', data.error);
                 }
             })
-            .catch(error => console.error('Error fetching questions:', error));
+            .catch((error) => console.error('Error fetching questions:', error));
     };
+  // Handle user answer selection
 
     const handleAnswer = (answer) => {
         const answerString = Array.isArray(answer) ? answer[0] : answer;
         if (typeof answerString === 'string') {
+            const updatedQuestions = [...questions];
+            updatedQuestions[currentQuestion].userAnswer = answerString; // Store user's answer
+            setQuestions(updatedQuestions);
+
             setUserAnswer(answerString);
             checkAnswer(answerString);
+
+            if (isExam) {// Auto-advance to next question in exam mode
+                setTimeout(() => {
+                    if (currentQuestion + 1 === updatedQuestions.length) {
+                        showExamResults();// Show exam results if it's the last question
+                    } else {
+                        setCurrentQuestion(currentQuestion + 1);
+                        setIsCorrect(false);
+                        setUserAnswer('');
+                    }
+                }, 500);
+            }
         } else {
             console.error('Answer is not a string:', answer);
             setIsCorrect(false);
         }
     };
+  // Check if the user's answer is correct
 
     const checkAnswer = (answer) => {
         const formattedAnswer = answer.trim().toLowerCase();
         const formattedCorrectAnswer = questions[currentQuestion].correct_answer.trim().toLowerCase();
         setIsCorrect(formattedAnswer === formattedCorrectAnswer);
     };
+  // Move to the next question or mark lesson as completed
 
     const handleNextQuestion = () => {
         if (isCorrect) {
@@ -80,9 +121,10 @@ const LessonPages = () => {
             }
         }
     };
+  // Mark the current lesson as completed
 
     const markLessonAsCompleted = () => {
-        if (email) {
+        if (email) { // If user is logged in, update on server
             fetch(`${ipAddress}/api/lessons/${lessonId}/complete`, {
                 method: 'POST',
                 headers: {
@@ -90,33 +132,97 @@ const LessonPages = () => {
                 },
                 body: JSON.stringify({ unitId, lessonId, email }),
             })
-                .then(response => response.json())
-                .then(data => {
+                .then((response) => response.json())
+                .then((data) => {
                     if (data.success) {
                         navigate('/learn');
                     } else {
                         console.error('Failed to mark lesson as completed:', data.error);
                     }
                 })
-                .catch(error => console.error('Error marking lesson as completed:', error));
-        } else {
+                .catch((error) => console.error('Error marking lesson as completed:', error));
+        } else { // If not logged in, store in local storage
             const completedLessons = JSON.parse(localStorage.getItem('completedLessons')) || [];
             completedLessons.push({ unitId, lessonId });
             localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
             navigate('/learn');
         }
     };
+  // Handle exam failure due to timeout
 
     const failExam = () => {
         console.error('Exam failed due to time running out.');
-        navigate('/learn'); // Redirect to the learn page on failure
+        navigate('/learn');
     };
+  // Format time in minutes and seconds
 
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     };
+
+    const showExamResults = () => {
+        let correctAnswers = 0;
+
+        // Loop through each question and check if the user's answer matches the correct answer
+        questions.forEach((q, i) => {
+            const formattedUserAnswer = (q.userAnswer || '').trim().toLowerCase(); // Assuming each question has a userAnswer property
+            const formattedCorrectAnswer = q.correct_answer.trim().toLowerCase();
+            if (formattedUserAnswer === formattedCorrectAnswer) {
+                correctAnswers++;
+            }
+        });
+
+        // Check if the user passed or failed
+        if (correctAnswers < 10) {
+            alert(`You failed the exam. Your score: ${correctAnswers} / ${questions.length}`);
+            navigate('/learn');
+        } else {
+            alert(`You passed the exam! Your score: ${correctAnswers} / ${questions.length}`);
+            markLessonAsCompleted();
+        }
+    };
+  // Close video popup
+
+    const handlePopupClose = () => {
+        setShowPopup(false);
+    };
+  // Close exam instructions and start the exam
+
+    const handleExamInfoClose = () => {
+        setShowExamInfo(false);
+    };
+
+    // Render nothing if the popup is shown
+    if (showPopup && videoUrl) {
+        return <VideoPopup videoUrl={formatVideoUrl(videoUrl)} onClose={handlePopupClose} />;
+    }
+  // Render exam instructions if needed
+
+    if (showExamInfo) {
+        return (
+            <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+                <div className="max-w-2xl w-full bg-white dark:bg-gray-800 rounded shadow-md p-6 flex flex-col items-center text-center">
+                    <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">
+                        Exam Instructions
+                    </h2>
+                    <p className="text-lg mb-6">
+                        You have 10 minutes to complete this exam.
+                    </p>
+                    <p className="text-lg mb-6">
+                        You need to answer at least 10 questions correctly out of 15 to pass.
+                    </p>
+                    <button
+                        className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded text-lg"
+                        onClick={handleExamInfoClose}
+                    >
+                        Start Exam
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
@@ -130,7 +236,7 @@ const LessonPages = () => {
                     <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">
                         {questions[currentQuestion].question}
                     </h2>
-                    {questions[currentQuestion].description && (
+                    {!isExam && questions[currentQuestion].description && (
                         <img
                             src={questions[currentQuestion].description}
                             alt="Description GIF"
@@ -149,7 +255,7 @@ const LessonPages = () => {
                             </button>
                         ))}
                     </div>
-                    {isCorrect && (
+                    {!isExam && isCorrect && (
                         <button
                             className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded text-lg mt-6"
                             onClick={handleNextQuestion}

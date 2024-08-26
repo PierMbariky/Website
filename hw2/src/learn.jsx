@@ -5,6 +5,7 @@ import Lesson from './components/lesson';
 import { useNavigate } from 'react-router-dom';
 
 function Learn() {
+    // State variables to manage data and UI display
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [units, setUnits] = useState([]);
@@ -13,8 +14,8 @@ function Learn() {
   const [lessons, setLessons] = useState({});
   const [showLessons, setShowLessons] = useState(false);
   const navigate = useNavigate();
-
-  // Retrieve user information from localStorage
+  // Retrieve user email if available
+  //to see if logged in
   const userJson = localStorage.getItem('user');
   let email = null;
 
@@ -22,7 +23,7 @@ function Learn() {
     const user = JSON.parse(userJson);
     email = user.email;
   }
-
+  // Fetch courses when the component mounts
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -39,12 +40,14 @@ function Learn() {
     };
     fetchCourses();
   }, []);
-
+  // Handle course selection
+  //to see units
   const handleCourseSelect = (course) => {
     setSelectedCourse(course);
     fetchUnits(course.courseId);
     setShowUnits(true);
   };
+  // Fetch units for a selected course
 
   const fetchUnits = async (courseId) => {
     try {
@@ -59,29 +62,26 @@ function Learn() {
       console.error('Error fetching units:', error);
     }
   };
-
+  // Handle unit selection
   const handleUnitSelect = (unit) => {
     setSelectedUnit(unit);
     fetchLessons(unit.id, email);
     setShowLessons(true);
   };
-
+  // Fetch lessons for a selected unit
   const fetchLessons = async (unitId, email) => {
     try {
-      // 1. Fetch lessons
       const lessonsResponse = await fetch(`${ipAddress}/api/units/${unitId}/lessons`);
       const lessonsData = await lessonsResponse.json();
       if (!lessonsData.success) {
         throw new Error('Failed to fetch lessons: ' + lessonsData.error);
       }
-  
-      // 2. Create a map of lessons and initialize completion status
+      console.log(lessonsData);
       const lessonObject = {};
       lessonsData.lessons.forEach(lesson => {
         lessonObject[lesson.id] = { lesson, completed: false };
       });
-  
-      // 3. Fetch or retrieve completion status for all users (logged in or not)
+        // Fetch completed lessons if user is logged in
       if (email) {
         const progressResponse = await fetch(`${ipAddress}/api/users/${email}/units/${unitId}/lessonsprogress`);
         const progressData = await progressResponse.json();
@@ -94,18 +94,14 @@ function Learn() {
             }
           });
         }
-      } else {
-        // Retrieve from localStorage and match by unitId and lessonId
+      } else { // If not logged in, get completed lessons from local storage
         const completedLessons = JSON.parse(localStorage.getItem('completedLessons')) || [];
-        
         completedLessons.forEach(completedLesson => {
-  
           if (completedLesson.unitId == unitId) { 
-            lessonObject[completedLesson.lessonId].completed=true;
+            lessonObject[completedLesson.lessonId].completed = true;
           }
         });
       }
-      // Update the lessons state with the completed lessons
     
       setLessons(lessonObject); 
   
@@ -113,14 +109,23 @@ function Learn() {
       console.error(error.message);
     }
   };
-
+  // Handle lesson click
+  const handleLessonClick = (lessonData) => {
+    navigate(`/lesson/${lessonData.lesson.id}`, {
+      state: {
+        exam: lessonData.lesson.title === 'Exam',
+        videoUrl: lessonData.lesson.videoUrl, // Pass video URL
+      },
+    });
+  };
+  // Handle back button click
   const handleBack = () => {
     setShowUnits(false);
     setShowLessons(false);
     setSelectedCourse(null);
     setSelectedUnit(null);
   };
-
+  // JSX to render the component based on current state
   return (
     <div className="flex flex-col dark:text-gray-100 items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
       {showLessons ? (
@@ -138,7 +143,9 @@ function Learn() {
                   lesson={lessonData.lesson}
                   completed={lessonData.completed}
                   isLocked={isLocked}
+                  onClick={() => handleLessonClick(lessonData)} // Handle lesson click
                 />
+                
               );
             })}
           </div>

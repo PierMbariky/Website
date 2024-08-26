@@ -4,13 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { ipAddress } from './App';
 
 const Login = ({ onLogin }) => {
+    // State variables for email, password, and error message
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+    // Navigation hook for redirection after successful login
   const navigate = useNavigate();
+  // Handles form submission for login
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    // Basic input validation
 
     if (!email || !password) {
       setError('Please fill in all fields');
@@ -18,6 +22,8 @@ const Login = ({ onLogin }) => {
     }
 
     try {
+            // Send login request to the server
+
       const response = await fetch(`${ipAddress}/api/login`, {
         method: 'POST',
         headers: {
@@ -27,18 +33,22 @@ const Login = ({ onLogin }) => {
       });
 
       const data = await response.json();
-      if (response.ok) {
+      if (response.ok) {// Successful login
+                // Store user data in local storage
         localStorage.setItem('user', JSON.stringify(data.user));
+                // Call onLogin prop (presumably to update app state)
+
         onLogin(data.user);
         navigate('/home'); // Redirect to protected area or dashboard
-      } else {
+      } else {// Login failed
         setError(data.error);
       }
-    } catch (error) {
+    } catch (error) {// Handle network or other errors
       console.error('Error during login:', error);
       setError('An error occurred');
     }
   };
+  // JSX for the login form
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
