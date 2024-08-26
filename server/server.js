@@ -52,6 +52,6 @@ app.post('/api/lessons/:lessonId/complete', (req, res) => {
 
 // Start the server
 app.listen(3000, () => {
-  console.log(`Server is running on port $8000`);
+  console.log(`Server is running on port $3000`);
 });
 })();
