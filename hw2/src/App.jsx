@@ -11,8 +11,7 @@ import LetterUnit from './components/characters';
 import LessonPages from './Lessonspage';
 import Home from './home';
 
-export const ipAddress = 'https://website-9shi-3xhxbd0yt-pier-mbarikys-projects.vercel.app/';
-
+export const ipAddress = 'https://website-9shi.vercel.app/';
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [user, setUser] = useState(() => {
