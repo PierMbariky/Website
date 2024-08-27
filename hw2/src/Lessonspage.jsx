@@ -286,10 +286,7 @@ const LessonPages = () => {
                         <p className="text-gray-600 dark:text-gray-400">
                             Question {currentQuestion + 1} of {questions.length}
                         </p>
-                        <p className="text-gray-600 dark:text-gray-400">
-                            Score: {currentQuestion} / {questions.length}
-                        </p>
-                    </div>
+                       
                 </div>
             )}
         </div>
