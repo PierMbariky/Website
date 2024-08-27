@@ -62,7 +62,7 @@ const LessonPages = () => {
   // Fetch questions from the API
 
     const fetchQuestions = (lessonId) => {
-        fetch(`${ipAddress}/api/lessons/${lessonId}/questions`)
+        fetch(`${ipAddress}api/lessons/${lessonId}/questions`)
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
@@ -125,7 +125,7 @@ const LessonPages = () => {
 
     const markLessonAsCompleted = () => {
         if (email) { // If user is logged in, update on server
-            fetch(`${ipAddress}/api/lessons/${lessonId}/complete`, {
+            fetch(`${ipAddress}api/lessons/${lessonId}/complete`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

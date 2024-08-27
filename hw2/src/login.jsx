@@ -24,7 +24,7 @@ const Login = ({ onLogin }) => {
     try {
             // Send login request to the server
 
-      const response = await fetch(`${ipAddress}/api/login`, {
+      const response = await fetch(`${ipAddress}api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

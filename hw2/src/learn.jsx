@@ -27,7 +27,7 @@ function Learn() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch(`${ipAddress}/api/courses`);
+        const response = await fetch(`${ipAddress}api/courses`);
         const data = await response.json();
         if (data.success) {
           setCourses(data.courses);
@@ -51,7 +51,7 @@ function Learn() {
 
   const fetchUnits = async (courseId) => {
     try {
-      const response = await fetch(`${ipAddress}/api/courses/${courseId}/units`);
+      const response = await fetch(`${ipAddress}api/courses/${courseId}/units`);
       const data = await response.json();
       if (data.success) {
         setUnits(data.units);
@@ -71,7 +71,7 @@ function Learn() {
   // Fetch lessons for a selected unit
   const fetchLessons = async (unitId, email) => {
     try {
-      const lessonsResponse = await fetch(`${ipAddress}/api/units/${unitId}/lessons`);
+      const lessonsResponse = await fetch(`${ipAddress}api/units/${unitId}/lessons`);
       const lessonsData = await lessonsResponse.json();
       if (!lessonsData.success) {
         throw new Error('Failed to fetch lessons: ' + lessonsData.error);
@@ -83,7 +83,7 @@ function Learn() {
       });
         // Fetch completed lessons if user is logged in
       if (email) {
-        const progressResponse = await fetch(`${ipAddress}/api/users/${email}/units/${unitId}/lessonsprogress`);
+        const progressResponse = await fetch(`${ipAddress}api/users/${email}/units/${unitId}/lessonsprogress`);
         const progressData = await progressResponse.json();
         if (!progressData.success) {
           throw new Error('Failed to fetch progress: ' + progressData.error);

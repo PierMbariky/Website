@@ -33,7 +33,7 @@ function ContactUs() {
 
     try {
       // Send data to your backend 
-      const response = await fetch(`${ipAddress}/api/contact`, { 
+      const response = await fetch(`${ipAddress}api/contact`, { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

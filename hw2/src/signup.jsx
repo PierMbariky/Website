@@ -23,7 +23,7 @@ const SignupPage = ({ onUserUpdate }) => {
     const newUser = { name, email, password };// Create new user object
     try {
       // Send signup request to the server
-      const response = await fetch(`${ipAddress}/api/signUp`, {
+      const response = await fetch(`${ipAddress}api/signUp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
