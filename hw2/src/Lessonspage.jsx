@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ipAddress } from './App';
 import VideoPopup from './components/VideoPopup';
+import ScorePopup from './components/ScorePopup'; // Import the ScorePopup component
 
 const LessonPages = () => {
-      // Access route parameters and navigation
-        // State variables
+    // Access route parameters and navigation
     const { lessonId, unitId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -16,6 +16,8 @@ const LessonPages = () => {
     const [timeLeft, setTimeLeft] = useState(600);
     const [showPopup, setShowPopup] = useState(true);
     const [showExamInfo, setShowExamInfo] = useState(false);
+    const [showScorePopup, setShowScorePopup] = useState(false); // State to show or hide score popup
+    const [score, setScore] = useState(0); // State to store the user's score
     const user = JSON.parse(localStorage.getItem('user')) || {};
     const email = user.email || '';
     const isExam = location.state?.exam;
@@ -30,37 +32,40 @@ const LessonPages = () => {
         }
         return url;
     };
-  // Fetch questions when lessonId changes
+
+    // Fetch questions when lessonId changes
     useEffect(() => {
         if (lessonId) {
             fetchQuestions(lessonId);
         }
     }, [lessonId]);
-      // Show exam info if it's an exam
+
+    // Show exam info if it's an exam
     useEffect(() => {
         if (isExam) {
             setShowExamInfo(true);
         }
     }, [isExam]);
-      // Start exam timer if it's an exam and instructions are closed
+
+    // Start exam timer if it's an exam and instructions are closed
     useEffect(() => {
         if (isExam && !showExamInfo) {
             const timer = setInterval(() => {
                 setTimeLeft((prevTime) => {
                     if (prevTime <= 0) {
                         clearInterval(timer);
-                        failExam();// Handle exam failure
+                        failExam(); // Handle exam failure
                         return 0;
                     }
                     return prevTime - 1;
                 });
             }, 1000);
 
-            return () => clearInterval(timer);// Cleanup on unmount
+            return () => clearInterval(timer); // Cleanup on unmount
         }
     }, [isExam, showExamInfo]);
-  // Fetch questions from the API
 
+    // Fetch questions from the API
     const fetchQuestions = (lessonId) => {
         fetch(`${ipAddress}api/lessons/${lessonId}/questions`)
             .then((response) => response.json())
@@ -73,8 +78,8 @@ const LessonPages = () => {
             })
             .catch((error) => console.error('Error fetching questions:', error));
     };
-  // Handle user answer selection
 
+    // Handle user answer selection
     const handleAnswer = (answer) => {
         const answerString = Array.isArray(answer) ? answer[0] : answer;
         if (typeof answerString === 'string') {
@@ -85,10 +90,10 @@ const LessonPages = () => {
             setUserAnswer(answerString);
             checkAnswer(answerString);
 
-            if (isExam) {// Auto-advance to next question in exam mode
+            if (isExam) { // Auto-advance to next question in exam mode
                 setTimeout(() => {
                     if (currentQuestion + 1 === updatedQuestions.length) {
-                        showExamResults();// Show exam results if it's the last question
+                        showExamResults(); // Show exam results if it's the last question
                     } else {
                         setCurrentQuestion(currentQuestion + 1);
                         setIsCorrect(false);
@@ -101,15 +106,15 @@ const LessonPages = () => {
             setIsCorrect(false);
         }
     };
-  // Check if the user's answer is correct
 
+    // Check if the user's answer is correct
     const checkAnswer = (answer) => {
         const formattedAnswer = answer.trim().toLowerCase();
         const formattedCorrectAnswer = questions[currentQuestion].correct_answer.trim().toLowerCase();
         setIsCorrect(formattedAnswer === formattedCorrectAnswer);
     };
-  // Move to the next question or mark lesson as completed
 
+    // Move to the next question or mark lesson as completed
     const handleNextQuestion = () => {
         if (isCorrect) {
             if (currentQuestion + 1 === questions.length) {
@@ -121,8 +126,8 @@ const LessonPages = () => {
             }
         }
     };
-  // Mark the current lesson as completed
 
+    // Mark the current lesson as completed
     const markLessonAsCompleted = () => {
         if (email) { // If user is logged in, update on server
             fetch(`${ipAddress}api/lessons/${lessonId}/complete`, {
@@ -148,14 +153,14 @@ const LessonPages = () => {
             navigate('/learn');
         }
     };
-  // Handle exam failure due to timeout
 
+    // Handle exam failure due to timeout
     const failExam = () => {
         console.error('Exam failed due to time running out.');
         navigate('/learn');
     };
-  // Format time in minutes and seconds
 
+    // Format time in minutes and seconds
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
@@ -174,32 +179,43 @@ const LessonPages = () => {
             }
         });
 
+        setScore(correctAnswers); // Set the user's score
+        setShowScorePopup(true); // Show the score popup
+
         // Check if the user passed or failed
         if (correctAnswers < 10) {
-            alert(`You failed the exam. Your score: ${correctAnswers} / ${questions.length}`);
-            navigate('/learn');
+            setTimeout(() => {
+                navigate('/learn');
+            }, 3000); // Redirect to learn page after 3 seconds
         } else {
-            alert(`You passed the exam! Your score: ${correctAnswers} / ${questions.length}`);
-            markLessonAsCompleted();
+            setTimeout(() => {
+                markLessonAsCompleted();
+            }, 3000); // Mark lesson as completed after 3 seconds
         }
     };
-  // Close video popup
 
+    // Close video popup
     const handlePopupClose = () => {
         setShowPopup(false);
     };
-  // Close exam instructions and start the exam
 
+    // Close exam instructions and start the exam
     const handleExamInfoClose = () => {
         setShowExamInfo(false);
+    };
+
+    // Close score popup
+    const handleScorePopupClose = () => {
+        setShowScorePopup(false);
+        navigate('/learn'); // Redirect to learn page after closing popup
     };
 
     // Render nothing if the popup is shown
     if (showPopup && videoUrl) {
         return <VideoPopup videoUrl={formatVideoUrl(videoUrl)} onClose={handlePopupClose} />;
     }
-  // Render exam instructions if needed
 
+    // Render exam instructions if needed
     if (showExamInfo) {
         return (
             <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
@@ -228,7 +244,7 @@ const LessonPages = () => {
         <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
             {isExam && (
                 <div className="text-red-500 font-bold text-2xl mb-4">
-                    Time left: {formatTime(timeLeft)}
+                                        Time left: {formatTime(timeLeft)}
                 </div>
             )}
             {questions.length > 0 && (
@@ -275,6 +291,9 @@ const LessonPages = () => {
                         </p>
                     </div>
                 </div>
+            )}
+            {showScorePopup && (
+                <ScorePopup score={score} totalQuestions={questions.length} onClose={handleScorePopupClose} />
             )}
         </div>
     );
