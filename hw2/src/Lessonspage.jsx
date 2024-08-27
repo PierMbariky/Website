@@ -290,7 +290,7 @@ const LessonPages = () => {
                 </div>
             )}
         </div>
-    );
+    )};
 };
 {showScorePopup && (
                  <ScorePopup score={score} totalQuestions={questions.length} onClose={handleScorePopupClose} />
