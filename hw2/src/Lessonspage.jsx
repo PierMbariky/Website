@@ -239,60 +239,61 @@ const LessonPages = () => {
             </div>
         );
     }
-
-    return (
-        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
-            {isExam && (
-                <div className="text-red-500 font-bold text-2xl mb-4">
-                                        Time left: {formatTime(timeLeft)}
-                </div>
-            )}
-            {questions.length > 0 && (
-                <div className="max-w-2xl w-full bg-white dark:bg-gray-800 rounded shadow-md p-6 flex flex-col items-center text-center">
-                    <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">
-                        {questions[currentQuestion].question}
-                    </h2>
-                    {!isExam && questions[currentQuestion].description && (
-                        <img
-                            src={questions[currentQuestion].description}
-                            alt="Description GIF"
-                            className="mb-6 rounded shadow-md"
-                            style={{ width: '450px', height: '300px', objectFit: 'cover' }}
-                        />
-                    )}
-                    <div className="flex flex-wrap gap-6 justify-center mb-6">
-                        {questions[currentQuestion].options.map((option, index) => (
-                            <button
-                                key={index}
-                                className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded text-lg ${userAnswer === option ? 'bg-green-500' : ''}`}
-                                onClick={() => handleAnswer(option)}
-                            >
-                                {option}
-                            </button>
-                        ))}
-                    </div>
-                    {!isExam && isCorrect && (
+  return (
+    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+        {isExam && (
+            <div className="text-red-500 font-bold text-2xl mb-4">
+                Time left: {formatTime(timeLeft)}
+            </div>
+        )}
+        {questions.length > 0 && (
+            <div className="max-w-2xl w-full bg-white dark:bg-gray-800 rounded shadow-md p-6 flex flex-col items-center text-center">
+                <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">
+                    {questions[currentQuestion].question}
+                </h2>
+                {!isExam && questions[currentQuestion].description && (
+                    <img
+                        src={questions[currentQuestion].description}
+                        alt="Description GIF"
+                        className="mb-6 rounded shadow-md"
+                        style={{ width: '450px', height: '300px', objectFit: 'cover' }}
+                    />
+                )}
+                <div className="flex flex-wrap gap-6 justify-center mb-6">
+                    {questions[currentQuestion].options.map((option, index) => (
                         <button
-                            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded text-lg mt-6"
-                            onClick={handleNextQuestion}
+                            key={index}
+                            className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded text-lg ${userAnswer === option ? 'bg-green-500' : ''}`}
+                            onClick={() => handleAnswer(option)}
                         >
-                            {currentQuestion + 1 === questions.length ? 'Finish Lesson' : 'Next Question'}
+                            {option}
                         </button>
-                    )}
-                    {!isExam && !isCorrect && userAnswer !== '' && (
-                        <p className="text-red-500 mt-6 text-lg">Incorrect answer, try again!</p>
-                    )}
-                    <div className="flex justify-between w-full mt-6 text-lg">
-                        <p className="text-gray-600 dark:text-gray-400">
-                            Question {currentQuestion + 1} of {questions.length}
-                        </p>
-                       
+                    ))}
                 </div>
-            )}
-        </div>
-    )};
-{showScorePopup && (
-                 <ScorePopup score={score} totalQuestions={questions.length} onClose={handleScorePopupClose} />
-             )}
-            };
+                {!isExam && isCorrect && (
+                    <button
+                        className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded text-lg mt-6"
+                        onClick={handleNextQuestion}
+                    >
+                        {currentQuestion + 1 === questions.length ? 'Finish Lesson' : 'Next Question'}
+                    </button>
+                )}
+                {!isExam && !isCorrect && userAnswer !== '' && (
+                    <p className="text-red-500 mt-6 text-lg">Incorrect answer, try again!</p>
+                )}
+                <div className="flex justify-between w-full mt-6 text-lg">
+                    <p className="text-gray-600 dark:text-gray-400">
+                        Question {currentQuestion + 1} of {questions.length}
+                    </p>
+                </div>
+            </div>
+        )}
+        {showScorePopup && (
+            <ScorePopup score={score} totalQuestions={questions.length} onClose={handleScorePopupClose} />
+        )}
+    </div>
+);
+};
 export default LessonPages;
+
+    
