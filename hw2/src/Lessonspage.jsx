@@ -279,7 +279,7 @@ const LessonPages = () => {
                             {currentQuestion + 1 === questions.length ? 'Finish Lesson' : 'Next Question'}
                         </button>
                     )}
-                    {!isCorrect && userAnswer !== '' && (
+                    {!isExam && !isCorrect && userAnswer !== '' && (
                         <p className="text-red-500 mt-6 text-lg">Incorrect answer, try again!</p>
                     )}
                     <div className="flex justify-between w-full mt-6 text-lg">
