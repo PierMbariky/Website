@@ -291,8 +291,8 @@ const LessonPages = () => {
             )}
         </div>
     )};
-};
 {showScorePopup && (
                  <ScorePopup score={score} totalQuestions={questions.length} onClose={handleScorePopupClose} />
              )}
+            };
 export default LessonPages;
