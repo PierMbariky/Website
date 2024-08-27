@@ -1,35 +1,35 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-  // Functional component representing a single lesson
 const Lesson = ({ lesson, completed, isLocked }) => {
-    // Check if the lesson is an exam based on its title
   const isExam = lesson.title.toLowerCase() === 'exam';
-    // Extract the video URL from the lesson object
   const videoUrl = lesson.videoUrl;
 
   return (
-    <div className="flex justify-center mb-4">
+    <div className="flex justify-center mb-6">
       {isLocked ? (
         <div
-          className="bg-gray-400 cursor-not-allowed rounded-full shadow-md p-4 w-24 h-24 flex justify-center items-center relative"
+          className="bg-gray-400 cursor-not-allowed rounded-full shadow-lg p-6 w-28 h-28 flex flex-col justify-center items-center relative transition-transform transform hover:scale-105"
         >
-          <div className="text-lg font-bold text-white">{lesson.title}</div>
+          <div className="text-lg font-semibold text-white text-center">{lesson.title}</div>
         </div>
       ) : (
-                // If the lesson is unlocked
         <Link
           to={`/Lessonspage/${lesson.unitid}/${lesson.id}`}
-          state={{ 
+          state={{
             exam: lesson.title === 'Exam',
-            videoUrl: videoUrl // Pass videoUrl here
-          }} 
-          className={`relative rounded-full shadow-xl p-6 w-28 h-28 flex flex-col justify-center items-center transition-transform transform hover:scale-105 ${completed ? 'bg-gradient-to-r from-green-400 to-green-600 text-white' : 'bg-gradient-to-r from-orange-400 to-orange-600 text-white dark:from-gray-700 dark:to-gray-800'}`}
+            videoUrl: videoUrl,
+          }}
+          className={`relative rounded-full shadow-xl p-6 w-28 h-28 flex flex-col justify-center items-center transition-transform transform hover:scale-105 ${
+            completed
+              ? 'bg-gradient-to-r from-green-400 to-green-600 text-white'
+              : 'bg-gradient-to-r from-red-500 to-red-700 text-white '
+          }`}
         >
-          <div className="text-lg font-bold text-white">{lesson.title}</div>
+          <div className="text-lg font-semibold text-white text-center">{lesson.title}</div>
           {completed && (
             <svg
-              className="w-6 h-6 text-red-900 absolute top-1 right-1 transform translate-x-1 translate-y-1"
+              className="w-6 h-6 text-green-900 absolute bottom-0.5 center "
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

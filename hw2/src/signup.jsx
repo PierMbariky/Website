@@ -106,7 +106,7 @@ const SignupPage = ({ onUserUpdate }) => {
           </div>
           <button
             type="submit"
-            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full"
+            className="bg-blue-700 hover:bg-blue-900 dark:hover:bg-blue-900  dark:text-white text-gray-900 font-bold py-2 px-4 rounded w-full"
           >
             Sign up
           </button>

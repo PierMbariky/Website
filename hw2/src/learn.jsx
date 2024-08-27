@@ -126,11 +126,11 @@ function Learn() {
     setSelectedUnit(null);
   };
   // JSX to render the component based on current state
-  return (
-    <div className="flex flex-col dark:text-gray-100 items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+  return  (
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-100 dark:bg-gray-900 p-4 pt-48">
       {showLessons ? (
-        <div className="mt-8 w-full max-w-6xl">
-          <h2 className="text-2xl font-bold mb-4">Lessons</h2>
+        <div className="mt-8 w-full max-w-6xl justify-center">
+          <h2 className="text-2xl font-bold mb-4 dark:text-white text-gray-900 ">Lessons</h2>
           <div className="flex flex-wrap gap-4 justify-center">
             {Object.values(lessons).map((lessonData) => {
               const isExam = lessonData.lesson.title === 'Exam';
@@ -150,7 +150,7 @@ function Learn() {
             })}
           </div>
           <button
-            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded mt-4"
+            className="bg-gray-300 hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-gray-500  dark:text-white text-gray-900 font-bold py-2 px-4 rounded-lg mt-4"
             onClick={handleBack}
           >
             Back to units
@@ -158,19 +158,19 @@ function Learn() {
         </div>
       ) : showUnits ? (
         <div className="mt-8 w-full max-w-6xl">
-          <h2 className="text-2xl font-bold mb-4">Units</h2>
+          <h2 className="text-2xl font-bold mb-4 dark:text-white text-gray-900">Units</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
             {units.map((unit) => (
               <Unit
-                key={unit.id}
-                unit={unit}
-                onClick={() => handleUnitSelect(unit)}
-              />
+              key={unit.id}
+               unit={unit}
+              onClick={() => handleUnitSelect(unit)}
+/>
+
             ))}
           </div>
           <button
-            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded mt-4"
-            onClick={handleBack}
+ className="bg-gray-300 hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-gray-500  dark:text-white text-gray-900 font-bold py-2 px-4 rounded-lg mt-4"            onClick={handleBack}
           >
             Back to courses
           </button>
@@ -181,7 +181,7 @@ function Learn() {
             {courses.map((item) => (
               <div key={item.courseId} className="p-4">
                 <div className="bg-white dark:bg-gray-800 rounded shadow-md p-4 flex flex-col items-center">
-                  <h2 className="text-xl font-bold mb-4 text-center">{item.name}</h2>
+                  <h2 className="text-xl font-bold mb-4 text-center dark:text-white text-gray-900">{item.name}</h2>
                   <img
                     src={item.imagesrc}
                     alt={item.name}
