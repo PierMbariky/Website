@@ -4,7 +4,12 @@ import { Link } from 'react-router-dom';
 function Home() {
   // Check if a user is logged in by inspecting localStorage
   const isLoggedIn = localStorage.getItem('user') !== null;
-
+  // Render the Home page, which includes:
+  // - A welcome message and introductory text.
+  // - Conditional rendering of Sign Up and Log In buttons if the user is not logged in.
+  // - Sections showcasing the features of the platform with interactive cards.
+  // - A call-to-action button to start learning if the user is interested in exploring the platform.
+  // The layout is responsive and adapts to different screen sizes.
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white p-4">
       <div className="text-center">

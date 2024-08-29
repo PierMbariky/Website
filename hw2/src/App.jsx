@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/sidebar';
 import Footer from './components/footer'; // Import the Footer component
-import Signup from './signup';
-import Login from './login';
-import Learn from './learn';
-import AboutUs from './aboutus';
-import ContactUs from './contactus';
+import Signup from './components/signup';
+import Login from './components/login';
+import Learn from './components/learn';
+import AboutUs from './components/aboutus';
+import ContactUs from './components/contactus';
 import LetterUnit from './components/characters';
-import LessonPages from './Lessonspage';
-import Home from './home';
+import LessonPages from './components/Lessonspage';
+import Home from './components/home';
 
 export const ipAddress = 'https://website-black-delta-36.vercel.app/';
 function App() {

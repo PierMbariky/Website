@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+// Lesson component displays a lesson item with visual feedback for completion and lock status
 
 const Lesson = ({ lesson, completed, isLocked }) => {
+    // Check if the lesson is an exam
+
   const isExam = lesson.title.toLowerCase() === 'exam';
+    // Retrieve the video URL for the lesson
+
   const videoUrl = lesson.videoUrl;
 
   return (

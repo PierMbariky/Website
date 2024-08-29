@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+// The Footer component provides navigation buttons for various sections of the app.
+// It includes options for logging in, signing up, logging out, and navigating to different pages.
+// This footer is designed to be fixed at the bottom of the screen and works best for mobile or small screens,
+// ensuring easy access to key sections of the app without taking up too much screen space.
 function Footer({ darkMode, onToggleTheme, user, onLogout }) {
   return (
     <footer className={`fixed bottom-0 left-0 w-full ${darkMode ? 'bg-gray-800 ' : 'bg-gray-100 '} p-4 shadow-lg flex justify-around`}>

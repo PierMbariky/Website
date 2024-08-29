@@ -5,12 +5,21 @@ function Sidebar({ darkMode, onToggleTheme, user, onLogout, isSlim }) {
   const buttonClasses = "w-full h-8 flex items-center justify-start rounded-md font-semibold mb-2";
   const iconClasses = "h-5 w-5 mr-2";
 
+  // The Sidebar component renders a navigation menu with different sections.
+  // It includes:
+  // - A logo button linking to the home page.
+  // - Navigation buttons for 'Learn', 'Letters', and other pages.
+  // - Conditional rendering for 'Log In' and 'Sign Up' buttons if the user is not logged in.
+  // - A 'Log Out' button if the user is logged in.
+  // - A 'Toggle Theme' button to switch between dark and light modes.
+  // - The sidebar's width can be slim or normal based on the `isSlim` prop.
+  // - The sidebar's color scheme is adjusted based on the `darkMode` prop.
   return (
     <nav className={`fixed top-0 left-0 h-full ${isSlim ? 'w-16' : 'w-40'} ${darkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'} p-4 shadow-lg`}>
       <div className={`flex items-center mb-0 mt-5  `}>
         <Link to="/home">
           <button className={`hover:text-gray-700 dark:hover:text-white transition duration-300 ease-in-out ${buttonClasses}`}>
-            <img src="https://cdn-icons-png.flaticon.com/128/3665/3665962.png" alt="playwize Icon" className={iconClasses} /> 
+            <img src="https://cdn-icons-png.flaticon.com/128/3665/3665962.png" alt="playwize Icon" className={iconClasses} />
             <span className="hidden lg:inline text-xl font-bold">Playwise</span>
           </button>
         </Link>

@@ -2,7 +2,10 @@ import React from 'react';
 
 const ScorePopup = ({ score, totalQuestions, onClose }) => {
     const passingScore = 10; // Define the minimum passing score
-
+    // This component displays a popup with the exam result.
+    // It shows whether the user has passed or failed based on their score.
+    // The popup includes the user's score, total number of questions, and a message.
+    // The user can close the popup using the provided button.
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-md text-center">
