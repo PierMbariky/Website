@@ -22,7 +22,7 @@ function AboutUs() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="flex flex-col items-center bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
               <img
-                src="https://media-mrs2-3.cdn.whatsapp.net/v/t61.24694-24/218641721_1017769079073594_87198498315670220_n.jpg?stp=dst-jpg_s96x96&ccb=11-4&oh=01_Q5AaIA1YX4tY_9JgujmAfQVMZMzHqlwLsFPk0nUjkiL5_9xf&oe=66B28234&_nc_sid=e6ed6c&_nc_cat=105"
+                src="/picture/redan.png"
                 alt="Team Member"
                 className="w-24 h-24 rounded-full mb-4"
               />
@@ -31,7 +31,7 @@ function AboutUs() {
             </div>
             <div className="flex flex-col items-center bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
               <img
-                src="https://media-mrs2-3.cdn.whatsapp.net/v/t61.24694-24/328800338_948561767071230_8729849892269641455_n.jpg?ccb=11-4&oh=01_Q5AaIHGxukHSAHhCI8nEYDi8WIeK4_BmiuJaF_qbOvTE9-Q_&oe=66B2932B&_nc_sid=e6ed6c&_nc_cat=111"
+                src="/picture/pier.jpg"
                 alt="Team Member"
                 className="w-24 h-24 rounded-full mb-4"
               />
@@ -40,7 +40,7 @@ function AboutUs() {
             </div>
             <div className="flex flex-col items-center bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
               <img
-                src="https://media-mrs2-1.cdn.whatsapp.net/v/t61.24694-24/414192696_1317875162252144_5701551386881286179_n.jpg?ccb=11-4&oh=01_Q5AaICjgUUxigTCSbkkOad2iEZwCKbbzQJFWfGRchSfh0H5L&oe=66B2654B&_nc_sid=e6ed6c&_nc_cat=103"
+                src="/picture/asaad.jpg"
                 alt="Team Member"
                 className="w-24 h-24 rounded-full mb-4"
               />
@@ -49,7 +49,7 @@ function AboutUs() {
             </div>
             <div className="flex flex-col items-center bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
               <img
-                src="https://media-mrs2-1.cdn.whatsapp.net/v/t61.24694-24/347466143_257079873530361_4844966495671500959_n.jpg?ccb=11-4&oh=01_Q5AaIIvJHyD5oXCgoRYL5JghlfegRmsjXNGh-RAEhVZrcjEw&oe=66B27645&_nc_sid=e6ed6c&_nc_cat=100"
+                src="/picture/jol.jpg"
                 alt="Team Member"
                 className="w-24 h-24 rounded-full mb-4"
               />
@@ -58,7 +58,7 @@ function AboutUs() {
             </div>
             <div className="flex flex-col items-center bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
               <img
-                src="https://media-mrs2-3.cdn.whatsapp.net/v/t61.24694-24/438821643_436080222746358_5579726536323847380_n.jpg?stp=dst-jpg_s96x96&ccb=11-4&oh=01_Q5AaIJMQbzCDx99mkWNjAD5YifZoSykkwj8cRVbM2S1jO_Hp&oe=66B3A3F8&_nc_sid=e6ed6c&_nc_cat=104"
+                src="/picture/nadeen.png"
                 alt="Team Member"
                 className="w-24 h-24 rounded-full mb-4"
               />
